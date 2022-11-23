@@ -9,11 +9,11 @@ import { Fragment } from 'react'
 
 
 export default async function Page() {
-  const getSitesWithCursor = await marketingGetSitesWithCursor({first: 12});
+  // const getSitesWithCursor = await marketingGetSitesWithCursor({first: 12});
   return (
     <Fragment>
       <HeadingDashboardFood title='Sites Marketing' />
-      <GridSitesMarketingPagination sites={getSitesWithCursor} />
+      <GridSitesMarketingPagination />
     </Fragment>
   )
 }

@@ -11,12 +11,12 @@ interface GridSitesMarketingPagination {
   sites: ListSite;
 }
 
-export function GridSitesMarketingPagination({ sites }: GridSitesMarketingPagination) {
+export function GridSitesMarketingPagination() {
   const [amount, setAmount] = useState(12);
   const searchParams = useSearchParams();
   let myObj:any = {};
   searchParams.forEach((value, key) => {myObj[key] = ['first', 'last'].includes(key) ? Number(value): value})
-  const { data: sitesMarketing } = useMarketingGetSitesWithCursor(myObj, sites);
+  const { data: sitesMarketing } = useMarketingGetSitesWithCursor(myObj);
   const listMarketing = useMemo(() => sitesMarketing, [sitesMarketing]);
 
   const {
