@@ -1,0 +1,46 @@
+
+import { graphQLClient } from "@/graphql/graphqlClient";
+import { DELETE_SITES_FOOD } from "@/graphql/mutate/food/site.food.mutate";
+import { DeleteManySitesById, ListSite } from "@/interfaces/site.interface";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
+import Swal from "sweetalert2";
+
+
+export const useDeleteSitesFood = () => {
+  const queryClient = useQueryClient();
+  const searchParams = useSearchParams();
+  let myObj:any = {};
+  searchParams.forEach((value, key) => {myObj[key] = ['first', 'last'].includes(key) ? Number(value): value})
+  return useMutation(
+    async (ids: string[]) => {
+      const { deleteSitesFood } = await graphQLClient.request<{deleteSitesFood: string[]}>(DELETE_SITES_FOOD, {
+        ids
+      });
+      return deleteSitesFood;
+    },
+    {
+      onSuccess:  (deleteSitesFood) => {
+        queryClient.invalidateQueries<ListSite>({queryKey: ["find-sites-food-with-cursor", myObj]});
+
+        // queryClient.setQueryData<Site[]>(["find-sites-food"],  (old) => old!.filter((site) => deleteSitesFood.indexOf(site._id) < 0));
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'Your file has been deleted.',
+          icon: 'success',
+          timer: 1000,
+          showConfirmButton: false,
+        })
+      },
+      onError: (error: { response: { errors: [{ message: string }] } }) => {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: error.response.errors[0].message,
+          footer: '<a href="">Why do I have this issue?</a>',
+        });
+      },
+    }
+  );
+};
+
